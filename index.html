@@ -603,6 +603,7 @@ body::after {
   margin: 0 auto;
   /* push content clear of the left edge line */
   padding-left: clamp(1.8rem, 3vw, 2.8rem);
+  /* background-color: red; */
 }
 
 .sec-label {
@@ -1533,7 +1534,7 @@ body::after {
 .contact-hl {
   font-family: var(--font-disp);
   font-size: clamp(2rem, 4.5vw, 3.2rem);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: 0.01em;
   margin-bottom: 1.5rem;
@@ -1658,6 +1659,12 @@ footer {
   .hero-name   { font-size: 2.8rem; }
   .trace-bar   { display:none; }
   footer       { flex-direction: column; text-align: center; }
+  .contact-hl   { text-align: center;}
+  .sec-inner   { padding-left: 0;}
+  .contact-body { text-align: center;max-width: 20rem}
+  .contact-layout {display: flex; flex-direction: column; align-items: center; text-align: center;flex-wrap: wrap;}
+  .clinks { align-items: flex-start; max-width: 20rem;}
+  .clink { max-width: 100%; overflow-wrap: anywhere;}
 }
 </style>
 </head>
@@ -2030,7 +2037,7 @@ footer {
     <div class="contact-layout">
       <div class="reveal">
         <div class="contact-hl">Let's Build<br><span>Something</span><br>Remarkable.</div>
-        <p class="contact-body">Open to AI engineering roles, consulting on agent architectures, and ambitious open-source collaborations. If you're building the next wave of AI systems, let's connect.</p>
+        <p class="contact-body">Highly ambitious for AI engineering roles, consulting on agent architectures, and ambitious open-source collaborations. If you're building the next wave of AI systems, let's connect.</p>
         <div class="clinks">
           <a href="mailto:prangonchakraborty2000@gmail.com" class="clink"><div class="cl-icon">✉</div>prangonchakraborty2000@gmail.com</a>
           <a href="https://github.com/PrangonChakraborty-1805085" class="clink"><div class="cl-icon">⬡</div>https://github.com/PrangonChakraborty-1805085</a>
@@ -2060,16 +2067,7 @@ footer {
 </section>
 
 <footer>
-  <div class="ft">© 2025 Alex Chen · AI Engineer · Built graph-first</div>
-  <div class="ft-stack">
-    <span class="ft-tag">Next.js → Vercel</span>
-    <span class="ft-tag">FastAPI → Render</span>
-    <span class="ft-tag">LangGraph</span>
-    <span class="ft-tag">LangChain</span>
-    <span class="ft-tag">Claude</span>
-    <span class="ft-tag">Vector DB</span>
-    <span class="ft-tag">Redis</span>
-  </div>
+  <div class="ft">© 2026 Prangon Chakraborty · Software Engineer · Built graph-first</div>
 </footer>
 
 </div><!-- /shell -->
