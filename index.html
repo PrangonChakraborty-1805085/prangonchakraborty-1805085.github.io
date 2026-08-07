@@ -3,1857 +3,461 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prangon Chakraborty — Software Engineer</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Prangon Chakraborty — Software Development Engineer</title>
+<meta name="description" content="Prangon Chakraborty — Software Development Engineer. Multi-agent AI systems, backend infrastructure, and AI integration.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-/* ════════════════════════════════════════════════
-   SLATE & EMERALD — DESIGN TOKENS
-════════════════════════════════════════════════ */
-:root {
-  /* Core palette */
-  --bg:           #050a0e;
-  --bg-deep:      #020507;
-  --bg-panel:     var(--bg-panel);
-  --bg-card:      #0c141a;
-  --bg-card-h:    var(--bg-card-h);
-
-  /* Primary accent — emerald */
-  --em:           #10b981;
-  --em-bright:    #34d399;
-  --em-dim:       rgba(16,185,129,0.10);
-  --em-glow:      rgba(16,185,129,0.22);
-  --em-line:      rgba(16,185,129,0.14);
-
-  /* Secondary accent — sky */
-  --sky:          #38bdf8;
-  --sky-dim:      rgba(56,189,248,0.09);
-
-  /* Warm white */
-  --white:        #f8fafc;
-  --white-dim:    rgba(248,250,252,0.05);
-
-  /* Tertiary */
-  --amber:        #f59e0b;
-  --amber-dim:    rgba(245,158,11,0.10);
-  --rose:         #f43f5e;
-  --rose-dim:     rgba(244,63,94,0.10);
-  --violet:       #7c3aed;
-  --violet-dim:   rgba(124,58,237,0.10);
-
-  /* Text — warm, high-contrast */
-  --text:         #f1f5f9;
-  --text-2:       #94a3b8;
-  --text-3:       #3d5168;
-
-  /* Borders */
-  --border:       rgba(16,185,129,0.13);
-  --border-h:     rgba(16,185,129,0.36);
-  --border-w:     rgba(255,255,255,0.07);
-
-  /* Fonts — Manrope for display, Inter for body, JetBrains for mono */
-  --font-mono:    'JetBrains Mono', monospace;
-  --font-disp:    'Manrope', sans-serif;
-  --font-body:    'Inter', sans-serif;
-
-  /* Radii */
-  --r:            6px;
-  --r-lg:         12px;
-
-  /* Shadows */
-  --shadow-card:  0 1px 0 0 var(--border), 0 4px 24px rgba(0,0,0,0.55);
-  --shadow-card-h:0 1px 0 0 var(--border-h), 0 8px 40px rgba(0,0,0,0.65), 0 0 28px var(--em-dim);
-}
-
-/* ════════════════════════════════════════════════
-   RESET & BASE
-════════════════════════════════════════════════ */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; font-size:16px; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  overflow-x: hidden;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar { width:3px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--em-dim); border-radius:2px; }
-
-/* ════════════════════════════════════════════════
-   3D CANVAS — fullscreen, behind everything
-════════════════════════════════════════════════ */
-#cvs3d {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.07; /* ghost — barely there, premium */
-}
-
-/* Vignette overlay — strong blanket, keeps text on clean bg */
-.vignette {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 80% 70% at 50% 50%, transparent 20%, rgba(5,10,14,0.82) 100%),
-    radial-gradient(ellipse 100% 50% at 50% 0%,   rgba(5,10,14,0.92) 0%, transparent 55%),
-    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(5,10,14,0.92) 0%, transparent 55%);
-}
-
-/* ════════════════════════════════════════════════
-   AURORA BACKGROUND — two slow drifting blobs
-   Purely CSS, z-index 0, behind everything.
-   Opacity so low they are felt, not seen.
-════════════════════════════════════════════════ */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(120px);
-}
-
-/* Top-left aurora — emerald */
-body::before {
-  width: 55vw;
-  height: 55vw;
-  max-width: 900px;
-  max-height: 900px;
-  top: -20vw;
-  left: -15vw;
-  background: radial-gradient(circle, rgba(16,185,129,0.045) 0%, transparent 70%);
-  animation: auroraDrift1 22s ease-in-out infinite alternate;
-}
-
-/* Bottom-right aurora — sky tint */
-body::after {
-  width: 50vw;
-  height: 50vw;
-  max-width: 800px;
-  max-height: 800px;
-  bottom: -15vw;
-  right: -10vw;
-  background: radial-gradient(circle, rgba(56,189,248,0.03) 0%, transparent 70%);
-  animation: auroraDrift2 28s ease-in-out infinite alternate;
-}
-
-@keyframes auroraDrift1 {
-  0%   { transform: translate(0, 0)    scale(1); }
-  33%  { transform: translate(4vw, 3vh) scale(1.08); }
-  66%  { transform: translate(-2vw, 6vh) scale(0.95); }
-  100% { transform: translate(6vw, 2vh) scale(1.05); }
-}
-
-@keyframes auroraDrift2 {
-  0%   { transform: translate(0, 0)      scale(1); }
-  40%  { transform: translate(-5vw, -4vh) scale(1.1); }
-  100% { transform: translate(-2vw, -7vh) scale(0.92); }
-}
-
-/* ════════════════════════════════════════════════
-   EDGE DATA-FLOW PULSE
-   A pseudo-element that travels down each section's
-   left edge line, like a signal propagating through
-   the LangGraph. Uses CSS animation-delay per section
-   so they stagger naturally.
-════════════════════════════════════════════════ */
-
-/* The travelling dot is a gradient overlay on ::before.
-   We use a keyframe that moves a bright highlight down
-   the edge line by animating background-position. */
-.sec::before {
-  background-image:
-    linear-gradient(
-      to bottom,
-      transparent 0%,
-      var(--em-line) 8%,
-      var(--em-line) 92%,
-      transparent 100%
-    ),
-    /* the moving pulse — a bright dot that travels down */
-    linear-gradient(
-      to bottom,
-      transparent    0%,
-      transparent    calc(var(--pulse-pos, 0%) - 3%),
-      rgba(52,211,153,0.55) calc(var(--pulse-pos, 0%) - 1%),
-      rgba(52,211,153,0.9)  var(--pulse-pos, 0%),
-      rgba(52,211,153,0.55) calc(var(--pulse-pos, 0%) + 1%),
-      transparent    calc(var(--pulse-pos, 0%) + 3%),
-      transparent    100%
-    );
-  background-size: 1px 100%, 1px 100%;
-  background-repeat: no-repeat;
-  animation: edgePulse 6s ease-in-out infinite;
-}
-
-@keyframes edgePulse {
-  0%   { --pulse-pos: -5%; }
-  100% { --pulse-pos: 105%; }
-}
-
-/* Stagger each section so pulses don't sync up */
-#about::before       { animation-delay: 0s;    animation-duration: 6.0s; }
-#skills::before      { animation-delay: -1.5s; animation-duration: 6.5s; }
-#projects::before    { animation-delay: -3.0s; animation-duration: 5.8s; }
-#experience::before  { animation-delay: -0.8s; animation-duration: 6.2s; }
-#architecture::before{ animation-delay: -2.2s; animation-duration: 6.8s; }
-#chat-sec::before    { animation-delay: -4.0s; animation-duration: 5.5s; }
-#contact::before     { animation-delay: -1.0s; animation-duration: 7.0s; }
-
-/* Register the custom property so browsers animate it smoothly */
-@property --pulse-pos {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: -5%;
-}
-
-.shell {
-  position: relative;
-  z-index: 10;
-  min-height: 100vh;
-}
-
-/* ════════════════════════════════════════════════
-   TOP BAR
-════════════════════════════════════════════════ */
-.topbar {
-  position: fixed;
-  top:0; left:0; right:0;
-  z-index: 200;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 clamp(1.2rem, 4vw, 3.5rem);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.logo-mark {
-  width: 28px; height: 28px;
-  border: 1.5px solid var(--em);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.logo-mark::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--em-dim), transparent);
-}
-
-.logo-mark svg { width:14px; height:14px; color: var(--em); position:relative; z-index:1; }
-
-.logo-name {
-  font-family: var(--font-disp);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.12em;
-}
-
-.logo-name span { color: var(--em); }
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: clamp(1.2rem, 2.5vw, 2.5rem);
-  list-style: none;
-}
-
-.nav-links a {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--text-2);
-  text-decoration: none;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-
-.nav-links a:hover { color: var(--em-bright); }
-
-.nav-cta {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  padding: 0.42rem 1.1rem;
-  border: 1px solid var(--border-h);
-  border-radius: var(--r);
-  background: var(--em-dim);
-  color: var(--em-bright);
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  transition: all 0.2s;
-}
-
-.nav-cta:hover {
-  background: var(--em-dim);
-  box-shadow: 0 0 20px var(--em-dim);
-}
-
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 4px;
-  background: none;
-  border: none;
-}
-
-.hamburger span {
-  width: 22px; height: 1.5px;
-  background: var(--em-bright);
-  display: block;
-  transition: all 0.3s;
-}
-
-.mobile-nav {
-  display: none;
-  position: fixed;
-  top: 58px; left:0; right:0;
-  z-index: 199;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  padding: 1.5rem;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.mobile-nav.open { display: flex; }
-
-.mobile-nav a {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--text-2);
-  text-decoration: none;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border);
-  transition: color 0.2s;
-}
-
-.mobile-nav a:hover { color: var(--em-bright); }
-
-/* ════════════════════════════════════════════════
-   HERO
-════════════════════════════════════════════════ */
-#hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px clamp(1.5rem,6vw,5rem) 5rem;
-  text-align: center;
-  position: relative;
-  /* solid base so text is never over the canvas */
-  background: radial-gradient(ellipse 90% 80% at 50% 50%, rgba(5,10,14,0.98) 0%, var(--bg) 70%);
-}
-
-/* hero glow removed — solid bg handles depth */
-
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--em-bright);
-  padding: 0.38rem 1.1rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  background: var(--em-dim);
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  animation: fadeUp 0.6s 0.2s forwards;
-}
-
-.hero-eyebrow-dot {
-  width: 5px; height: 5px;
-  background: var(--em-bright);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--em);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,100% { box-shadow: 0 0 5px var(--em); }
-  50%      { box-shadow: 0 0 14px var(--em), 0 0 28px var(--em-glow); }
-}
-
-.hero-name {
-  font-family: var(--font-disp);
-  font-size: clamp(2.8rem, 7.0vw, 8rem);
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin-bottom: 2rem;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.4s forwards;
-}
-
-.hero-name .l1 {
-  display: block;
-  color: var(--text);
-}
-
-.hero-name .l2 {
-  display: block;
-  color: var(--em-bright);
-}
-
-.hero-sub {
-  font-family: var(--font-body);
-  font-size: clamp(0.9rem, 1.6vw, 1.05rem);
-  color: var(--text-2);
-  max-width: 560px;
-  line-height: 1.9;
-  margin: 0 auto 3rem;
-  font-weight: 400;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.6s forwards;
-}
-
-.hero-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.6rem;
-  margin-bottom: 3.5rem;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.8s forwards;
-}
-
-.chip {
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  padding: 0.38rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  color: var(--text-2);
-  background: var(--bg-card);
-  letter-spacing: 0.05em;
-  transition: all 0.2s;
-}
-
-.chip:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
-}
-
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  opacity: 0;
-  animation: fadeUp 0.7s 1s forwards;
-}
-
-.btn-p {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.75rem 2rem;
-  background: var(--em);
-  color: var(--white);
-  border: none;
-  border-radius: var(--r);
-  cursor: pointer;
-  letter-spacing: 0.07em;
-  transition: all 0.22s;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-p::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.btn-p:hover {
-  background: var(--em-bright);
-  box-shadow: 0 0 32px var(--em-glow), 0 4px 20px rgba(16,185,129,0.4);
-  transform: translateY(-2px);
-}
-
-.btn-p:hover::after { opacity: 1; }
-
-.btn-g {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 0.75rem 2rem;
-  background: transparent;
-  color: var(--text-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  cursor: pointer;
-  letter-spacing: 0.07em;
-  transition: all 0.22s;
-}
-
-.btn-g:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-}
-
-.scroll-cue {
-  position: absolute;
-  bottom: 2.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  opacity: 0;
-  animation: fadeUp 0.7s 1.4s forwards;
-}
-
-.scroll-line {
-  width: 1px; height: 48px;
-  background: linear-gradient(to bottom, var(--em), transparent);
-  animation: scrollPulse 2.5s ease-in-out infinite;
-}
-
-.scroll-label {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-@keyframes scrollPulse {
-  0%,100% { opacity:0.3; }
-  50%      { opacity:0.9; }
-}
-
-/* ════════════════════════════════════════════════
-   SECTION SCAFFOLDING
-════════════════════════════════════════════════ */
-.sec {
-  position: relative;
-  padding: clamp(4.5rem, 9vh, 8rem) clamp(1.5rem, 6vw, 5rem);
-  background: var(--bg);
-}
-
-/* ── INTER-SECTION EDGES ──────────────────────────
-   A vertical edge line runs down the LEFT margin of
-   every section, connecting node_01 → node_02 → …
-   The node dot sits at the top-left of each section.
-   Background-image set above in EDGE DATA-FLOW PULSE.
-─────────────────────────────────────────────────── */
-.sec::before {
-  content: '';
-  position: absolute;
-  left: clamp(1.5rem, 6vw, 5rem);
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  pointer-events: none;
-}
-
-/* Node dot on the left edge line */
-.sec::after {
-  content: '';
-  position: absolute;
-  left: calc(clamp(1.5rem, 6vw, 5rem) - 4px);
-  top: clamp(4.5rem, 9vh, 8rem);
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--em);
-  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--em-line), 0 0 12px var(--em-glow);
-  pointer-events: none;
-}
-
-.sec-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  /* push content clear of the left edge line */
-  padding-left: clamp(1.8rem, 3vw, 2.8rem);
-  /* background-color: red; */
-}
-
-.sec-label {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-  /* small left offset to align pill with the edge dot */
-  margin-left: -0.2rem;
-}
-
-.sec-id {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--em-bright);
-  padding: 0.28rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  background: var(--em-dim);
-  /* small emerald left bar to echo the edge line */
-  box-shadow: inset 2px 0 0 var(--em);
-}
-
-.sec-rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, var(--border), transparent);
-}
-
-.sec-title {
-  font-family: var(--font-disp);
-  font-size: clamp(1.75rem, 3.8vw, 2.9rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-}
-
-.sec-sub {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-3);
-  letter-spacing: 0.08em;
-  margin-bottom: 3rem;
-}
-
-/* ════════════════════════════════════════════════
-   ABOUT
-════════════════════════════════════════════════ */
-.about-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: start;
-}
-
-.about-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.avatar-node {
-  width: 100%;
-  aspect-ratio: 1;
-  max-width: 220px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-disp);
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--em-bright);
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-}
-
-.avatar-node::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 30%, var(--em-dim), transparent 65%);
-}
-
-/* scanning line */
-.avatar-node::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--em-bright), transparent);
-  animation: scan 3s linear infinite;
-}
-
-@keyframes scan {
-  0%   { top: 0%;   opacity: 0; }
-  5%   { opacity: 0.6; }
-  95%  { opacity: 0.6; }
-  100% { top: 100%; opacity: 0; }
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.6rem 0.9rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-2);
-  transition: all 0.2s;
-}
-
-.sidebar-item:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-}
-
-.sidebar-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--em);
-  box-shadow: 0 0 6px var(--em);
-  flex-shrink: 0;
-}
-
-.about-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  box-shadow: var(--shadow-card);
-}
-
-.node-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.n-tag {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--em-bright);
-  padding: 0.2rem 0.55rem;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
-
-.n-id {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-3);
-}
-
-.n-status {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--green);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.n-status::before {
-  content: '';
-  width: 5px; height: 5px;
-  background: var(--green);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-.about-text p {
-  font-size: 0.97rem;
-  color: var(--text-2);
-  line-height: 1.85;
-  margin-bottom: 1.2rem;
-  font-weight: 400;
-}
-
-.about-text strong { color: var(--em-bright); font-weight: 600; }
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.stat-cell { text-align: center; }
-
-.stat-val {
-  font-family: var(--font-disp);
-  font-size: 1.9rem;
-  font-weight: 900;
-  color: var(--em-bright);
-  line-height: 1;
-  
-  
-  
-  
-}
-
-.stat-key {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 0.3rem;
-}
-
-/* ════════════════════════════════════════════════
-   SKILLS
-════════════════════════════════════════════════ */
-.skill-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-  gap: 1.2rem;
-}
-
-.skill-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 1.5rem;
-  transition: all 0.25s;
-  position: relative;
-  overflow: hidden;
-}
-
-/* animated bottom-edge fill */
-.skill-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0;
-  height: 2px;
-  width: var(--fill, 0%);
-  background: linear-gradient(90deg, var(--em), var(--sky));
-  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
-}
-
-.skill-card:hover {
-  border-color: var(--border-h);
-  background: var(--bg-card-h);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-card-h);
-}
-
-.skill-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.2rem;
-}
-
-.skill-card-name {
-  font-family: var(--font-disp);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.04em;
-}
-
-.skill-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95rem;
-}
-
-.stags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-
-.stag {
-  font-family: var(--font-mono);
-  font-size: 0.63rem;
-  padding: 0.22rem 0.52rem;
-  border-radius: 4px;
-  letter-spacing: 0.03em;
-}
-
-.st-b { background:var(--em-dim);     border:1px solid rgba(16,185,129,0.2);  color:#6ee7b7; } /* emerald */
-.st-c { background:var(--sky-dim);    border:1px solid rgba(56,189,248,0.2);  color:#7dd3fc; } /* sky */
-.st-i { background:var(--violet-dim); border:1px solid rgba(124,58,237,0.2);  color:#c4b5fd; } /* violet */
-.st-g { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.18); color:#fcd34d; } /* amber */
-.st-w { background:var(--white-dim);  border:1px solid rgba(255,255,255,0.08); color:#94a3b8; } /* slate */
-
-.st-w { background:var(--white-dim);  border:1px solid rgba(255,255,255,0.1);   color:#cbd5e1; }
-
-/* ════════════════════════════════════════════════
-   PROJECTS
-════════════════════════════════════════════════ */
-.proj-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.4rem;
-}
-
-.proj-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: clamp(1.2rem, 2.5vw, 1.8rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  transition: all 0.25s;
-  position: relative;
-  overflow: hidden;
-}
-
-.proj-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1.5px;
-  background: linear-gradient(90deg, var(--em), var(--violet));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s;
-}
-
-.proj-card:hover {
-  border-color: var(--border-h);
-  background: var(--bg-card-h);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-h);
-}
-
-.proj-card:hover::before { transform: scaleX(1); }
-
-.proj-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.8rem;
-}
-
-.proj-type {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--violet);
-  padding: 0.2rem 0.55rem;
-  background: var(--violet-dim);
-  border: 1px solid rgba(124,58,237,0.2);
-  border-radius: 4px;
-}
-
-.proj-live {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  color: var(--green);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.proj-live::before {
-  content: '';
-  width: 4px; height: 4px;
-  background: var(--green);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-.proj-name {
-  font-family: var(--font-disp);
-  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.02em;
-}
-
-.proj-desc {
-  font-size: 0.88rem;
-  color: var(--text-2);
-  line-height: 1.78;
-  font-weight: 400;
-}
-
-.proj-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-
-.p-tech {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  padding: 0.2rem 0.5rem;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-2);
-}
-
-.proj-links { display: flex; gap: 0.6rem; margin-top: auto; }
-
-.proj-btn {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  padding: 0.32rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-2);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.04em;
-}
-
-.proj-btn:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-}
-
-/* ════════════════════════════════════════════════
-   EXPERIENCE TIMELINE
-════════════════════════════════════════════════ */
-.exp-wrap {
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
-}
-
-/* vertical edge */
-.exp-wrap::before {
-  content: '';
-  position: absolute;
-  left: clamp(16px, 3vw, 23px);
-  top: 8px; bottom: 8px;
-  width: 1px;
-  background: linear-gradient(to bottom,
-    var(--em) 0%,
-    rgba(124,58,237,0.5) 60%,
-    transparent 100%);
-}
-
-.exp-row {
-  display: flex;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  margin-bottom: 2.5rem;
-}
-
-.exp-node {
-  flex-shrink: 0;
-  width: clamp(32px, 4vw, 46px);
-  height: clamp(32px, 4vw, 46px);
-  background: var(--bg-deep);
-  border: 1.5px solid var(--em);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: var(--em-bright);
-  box-shadow: 0 0 16px var(--em-dim);
-  z-index: 1;
-  position: relative;
-  top: 4px;
-  transition: all 0.25s;
-}
-
-.exp-row:hover .exp-node {
-  background: var(--em-dim);
-  box-shadow: 0 0 24px var(--em-glow);
-}
-
-.exp-card {
-  flex: 1;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: clamp(1rem, 2.5vw, 1.8rem);
-  transition: all 0.25s;
-}
-
-.exp-row:hover .exp-card {
-  border-color: var(--border-h);
-  box-shadow: var(--shadow-card);
-}
-
-.exp-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.6rem;
-}
-
-.exp-period {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--em-bright);
-  padding: 0.2rem 0.6rem;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  letter-spacing: 0.06em;
-}
-
-.exp-kind {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  color: var(--text-3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.exp-role {
-  font-family: var(--font-disp);
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.02em;
-  margin-bottom: 0.2rem;
-}
-
-.exp-company {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-2);
-  margin-bottom: 0.9rem;
-}
-
-.exp-desc {
-  font-size: 0.88rem;
-  color: var(--text-2);
-  line-height: 1.78;
-  font-weight: 400;
-  margin-bottom: 0.7rem;
-}
-
-/* ════════════════════════════════════════════════
-   ARCHITECTURE DIAGRAM
-════════════════════════════════════════════════ */
-.arch-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.arch-col { display: flex; flex-direction: column; gap: 0.8rem; }
-
-.arch-col-label {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  text-align: center;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.arch-node {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 1rem;
-  text-align: center;
-  transition: all 0.22s;
-  cursor: default;
-}
-
-.arch-node:hover {
-  border-color: var(--border-h);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
-  background: var(--bg-card-h);
-}
-
-.arch-node.hl {
-  border-color: rgba(16,185,129,0.28);
-  background: var(--em-dim);
-}
-
-.arch-node.hl .an-name { color: var(--em-bright); }
-
-.an-icon { font-size: 1.2rem; margin-bottom: 0.4rem; }
-.an-name { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
-.an-desc { font-size: 0.6rem; color: var(--text-3); line-height: 1.4; }
-
-/* ════════════════════════════════════════════════
-   CHAT SECTION
-════════════════════════════════════════════════ */
-.chat-wrap {
-  max-width: 820px;
-  margin: 0 auto;
-}
-
-.chat-node {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-card-h);
-}
-
-.chat-nhead {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.9rem 1.5rem;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-}
-
-.chat-pulse {
-  width: 8px; height: 8px;
-  background: var(--em-bright);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--em);
-  animation: pulse 2s infinite;
-}
-
-.chat-ntitle {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--em-bright);
-  letter-spacing: 0.06em;
-}
-
-.chat-nmeta {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.chat-model {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  color: var(--text-3);
-  padding: 0.18rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg-card);
-}
-
-.chat-online {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  color: var(--green);
-  padding: 0.18rem 0.5rem;
-  border: 1px solid rgba(52,211,153,0.2);
-  border-radius: 4px;
-  background: var(--green-dim);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.chat-online::before {
-  content: '';
-  width: 4px; height: 4px;
-  background: var(--green);
-  border-radius: 50%;
-}
-
-/* LangGraph trace bar */
-.trace-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.trace-bar::-webkit-scrollbar { display: none; }
-
-.t-node {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  padding: 0.2rem 0.55rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-3);
-  background: var(--bg-card);
-  white-space: nowrap;
-  letter-spacing: 0.04em;
-  transition: all 0.3s;
-}
-
-.t-node.active {
-  border-color: var(--em-bright);
-  color: var(--em-bright);
-  background: var(--em-dim);
-  box-shadow: 0 0 10px var(--em-dim);
-}
-
-.t-node.done {
-  border-color: rgba(52,211,153,0.3);
-  color: var(--green);
-  background: var(--green-dim);
-}
-
-.t-arr {
-  font-size: 0.58rem;
-  color: var(--text-3);
-  flex-shrink: 0;
-}
-
-/* Messages */
-.chat-msgs {
-  height: clamp(300px, 40vh, 440px);
-  overflow-y: auto;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  scroll-behavior: smooth;
-}
-
-.chat-msgs::-webkit-scrollbar { width: 3px; }
-.chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-.msg-row {
-  display: flex;
-  gap: 0.8rem;
-  opacity: 0;
-  animation: fadeUp 0.3s forwards;
-}
-
-.msg-row.usr { flex-direction: row-reverse; }
-
-.m-av {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.m-av.ai {
-  background: var(--em-dim);
-  border: 1px solid rgba(16,185,129,0.3);
-  color: var(--em-bright);
-}
-
-.m-av.you {
-  background: var(--violet-dim);
-  border: 1px solid rgba(124,58,237,0.3);
-  color: #a5b4fc;
-}
-
-.m-body { max-width: 78%; }
-
-.m-meta {
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  color: var(--text-3);
-  margin-bottom: 0.3rem;
-  letter-spacing: 0.06em;
-}
-
-.msg-row.usr .m-meta { text-align: right; }
-
-.m-bubble {
-  font-size: 0.86rem;
-  line-height: 1.75;
-  padding: 0.8rem 1.1rem;
-  border-radius: 8px;
-  font-weight: 300;
-}
-
-.m-bubble.ai-b {
-  background: var(--em-dim);
-  border: 1px solid var(--em-dim);
-  color: var(--text);
-}
-
-.m-bubble.usr-b {
-  background: rgba(124,58,237,0.07);
-  border: 1px solid rgba(124,58,237,0.18);
-  color: var(--text);
-}
-
-/* Typing */
-.typing-row { display: flex; gap: 0.8rem; }
-
-.typing-dots {
-  display: flex;
-  gap: 4px;
-  padding: 0.65rem 0.9rem;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  align-items: center;
-}
-
-.td {
-  width: 5px; height: 5px;
-  background: var(--em-bright);
-  border-radius: 50%;
-  animation: tdB 1.3s ease-in-out infinite;
-}
-
-.td:nth-child(2) { animation-delay: 0.18s; }
-.td:nth-child(3) { animation-delay: 0.36s; }
-
-@keyframes tdB {
-  0%,60%,100% { transform: translateY(0); opacity:0.35; }
-  30%          { transform: translateY(-6px); opacity:1; }
-}
-
-/* Suggestions */
-.chat-sugg {
-  padding: 0.8rem 1.5rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  background: rgba(0,0,0,0.15);
-}
-
-.sq {
-  font-family: var(--font-mono);
-  font-size: 0.61rem;
-  padding: 0.28rem 0.65rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-2);
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.04em;
-}
-
-.sq:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-}
-
-/* Input */
-.chat-inp-row {
-  display: flex;
-  gap: 0.7rem;
-  padding: 1rem 1.5rem;
-  background: rgba(0,0,0,0.28);
-  border-top: 1px solid var(--border);
-}
-
-.chat-inp {
-  flex: 1;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 0.65rem 1rem;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.chat-inp:focus { border-color: var(--border-h); }
-.chat-inp::placeholder { color: var(--text-3); }
-
-.chat-send {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.65rem 1.3rem;
-  background: var(--em-dim);
-  border: 1px solid var(--border-h);
-  border-radius: var(--r);
-  color: var(--em-bright);
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.chat-send:hover {
-  background: var(--em-dim);
-  box-shadow: 0 0 22px var(--em-dim);
-}
-
-.chat-send:disabled { opacity: 0.3; cursor: not-allowed; }
-
-/* ════════════════════════════════════════════════
-   CONTACT
-════════════════════════════════════════════════ */
-.contact-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 5vw, 5rem);
-  max-width: 1000px;
-  margin: 0 auto;
-  align-items: start;
-}
-
-.contact-hl {
-  font-family: var(--font-disp);
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: 0.01em;
-  margin-bottom: 1.5rem;
-}
-
-.contact-hl span {
-  color: var(--em-bright);
-}
-
-.contact-body {
-  font-size: 0.92rem;
-  color: var(--text-2);
-  line-height: 1.82;
-  font-weight: 400;
-  margin-bottom: 2rem;
-}
-
-.clinks { display: flex; flex-direction: column; gap: 0.8rem; }
-
-.clink {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.85rem 1.1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  text-decoration: none;
-  color: var(--text-2);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  transition: all 0.22s;
-  letter-spacing: 0.04em;
-}
-
-.clink:hover {
-  border-color: var(--border-h);
-  color: var(--em-bright);
-  background: var(--em-dim);
-  transform: translateX(4px);
-}
-
-.cl-icon {
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  background: var(--em-dim);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: var(--em-bright);
-  flex-shrink: 0;
-}
-
-/* ════════════════════════════════════════════════
-   FOOTER
-════════════════════════════════════════════════ */
-footer {
-  position: relative; z-index: 10;
-  padding: 2rem clamp(1.5rem, 6vw, 5rem);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.ft { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-3); letter-spacing: 0.06em; }
-
-.ft-stack { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-.ft-tag {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-3);
-  background: var(--bg-card);
-}
-
-/* ════════════════════════════════════════════════
-   ANIMATIONS & REVEAL
-════════════════════════════════════════════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal.vis {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ════════════════════════════════════════════════
-   RESPONSIVE
-════════════════════════════════════════════════ */
-@media (max-width: 960px) {
-  .about-layout  { grid-template-columns: 1fr; }
-  .contact-layout { grid-template-columns: 1fr; }
-  .stat-grid     { grid-template-columns: repeat(2,1fr); }
-  .arch-grid     { grid-template-columns: repeat(2,1fr); }
-  .nav-links     { display:none; }
-  .nav-cta       { display:none; }
-  .hamburger     { display:flex; }
-  .about-sidebar { flex-direction: row; flex-wrap: wrap; }
-  .avatar-node   { max-width: 120px; }
-}
-
-@media (max-width: 520px) {
-  .proj-grid   { grid-template-columns: 1fr; }
-  .skill-grid  { grid-template-columns: 1fr; }
-  .arch-grid   { grid-template-columns: 1fr; }
-  .hero-name   { font-size: 2.8rem; }
-  .trace-bar   { display:none; }
-  footer       { flex-direction: column; text-align: center; }
-  .contact-hl   { text-align: center;}
-  .sec-inner   { padding-left: 0;}
-  .contact-body { text-align: center;max-width: 20rem}
-  .contact-layout {display: flex; flex-direction: column; align-items: center; text-align: center;flex-wrap: wrap;}
-  .clinks { align-items: flex-start; max-width: 20rem;}
-  .clink { max-width: 100%; overflow-wrap: anywhere;}
+:root{
+  --bg:#ffffff;
+  --bg-soft:#F6F7FB;
+  --bg-pill:#F1F2F6;
+  --ink:#14171F;
+  --ink-soft:#4B5160;
+  --ink-faint:#8A8F9C;
+  --line:#E7E8EF;
+  --accent:#2F5DF5;
+  --accent-dark:#2347D6;
+  --accent-soft:#EAEFFF;
+  --radius-lg:26px;
+  --radius-pill:999px;
+  --maxw:1180px;
+  --font-disp:'Baloo 2', sans-serif;
+  --font-body:'Poppins', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+ul{list-style:none;}
+button{font:inherit;cursor:pointer;border:none;background:none;}
+img{max-width:100%;display:block;}
+::selection{background:var(--accent-soft);color:var(--accent-dark);}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+a:focus-visible, button:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 clamp(1.25rem,4vw,3rem);}
+
+/* top gradient strip */
+.topstrip{
+  height:6px;
+  width:100%;
+  background:linear-gradient(90deg,#BFD3FF 0%, #F3D6F0 50%, #FFE3C7 100%);
+}
+
+/* ---------- NAV ---------- */
+.topbar{
+  position:sticky; top:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.4rem clamp(1.25rem,4vw,3rem);
+  background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--font-disp);
+  font-weight:700;
+  font-size:1.35rem;
+  color:var(--ink);
+}
+.nav-pill{
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+  background:var(--bg-pill);
+  border-radius:var(--radius-pill);
+  padding:0.5rem 0.6rem;
+}
+.nav-pill a{
+  display:inline-flex;
+  align-items:center;
+  gap:0.45rem;
+  font-size:0.95rem;
+  font-weight:500;
+  color:var(--ink-soft);
+  padding:0.55rem 1.05rem;
+  border-radius:var(--radius-pill);
+  transition:background 0.2s ease, color 0.2s ease;
+}
+.nav-pill a svg{width:16px; height:16px; flex-shrink:0;}
+.nav-pill a:hover, .nav-pill a.active{
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 2px 8px rgba(20,23,31,0.08);
+}
+.nav-social{ display:flex; align-items:center; gap:1rem; }
+.nav-social a{
+  width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ink);
+  border-radius:50%;
+  transition:background 0.2s ease, transform 0.2s ease;
+}
+.nav-social a:hover{ background:var(--bg-pill); transform:translateY(-2px); }
+.nav-social svg{ width:20px; height:20px; }
+
+.hamburger{
+  display:none;
+  width:38px;height:38px;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px;
+}
+.hamburger span{ width:20px;height:2px;background:var(--ink); border-radius:1px; transition:0.25s ease; }
+.hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+.mobile-nav{
+  position:fixed; top:76px; left:1rem; right:1rem; z-index:499;
+  background:#fff; border:1px solid var(--line); border-radius:20px;
+  box-shadow:0 20px 40px rgba(20,23,31,0.12);
+  padding:0.75rem;
+  display:flex; flex-direction:column; gap:0.25rem;
+  transform:translateY(-8px); opacity:0; pointer-events:none;
+  transition:0.22s ease;
+}
+.mobile-nav.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+.mobile-nav a{
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.8rem 0.9rem; border-radius:12px;
+  font-weight:500; color:var(--ink-soft);
+}
+.mobile-nav a:hover{ background:var(--bg-soft); color:var(--ink); }
+.mobile-nav a svg{ width:17px; height:17px; }
+
+/* ---------- HERO ---------- */
+.hero{
+  text-align:center;
+  padding:6.5rem 1.5rem 5rem;
+  max-width:900px;
+  margin:0 auto;
+}
+.hero h1{
+  font-family:var(--font-disp);
+  font-weight:800;
+  font-size:clamp(2.2rem, 6vw, 3.6rem);
+  letter-spacing:-0.01em;
+  line-height:1.12;
+  margin-bottom:1.1rem;
+}
+.hero .role{
+  font-family:var(--font-disp);
+  font-weight:600;
+  font-size:clamp(1.1rem, 2.6vw, 1.5rem);
+  color:#2A2E38;
+  margin-bottom:1.6rem;
+}
+.hero .tagline{
+  max-width:620px;
+  margin:0 auto 2.4rem;
+  font-size:1.05rem;
+  color:var(--ink-soft);
+}
+.hero-actions{
+  display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex; align-items:center; gap:0.55rem;
+  font-weight:600; font-size:0.98rem;
+  padding:0.95rem 1.7rem;
+  border-radius:var(--radius-pill);
+  transition:all 0.2s ease;
+}
+.btn svg{ width:18px; height:18px; }
+.btn-primary{ background:var(--accent); color:#fff; box-shadow:0 10px 24px rgba(47,93,245,0.28); }
+.btn-primary:hover{ background:var(--accent-dark); transform:translateY(-2px); }
+.btn-outline{ background:#fff; color:var(--ink); border:1.5px solid var(--line); }
+.btn-outline:hover{ border-color:var(--accent); color:var(--accent-dark); transform:translateY(-2px); }
+
+/* ---------- SECTION SHELL ---------- */
+.sec{ padding:5rem 0; scroll-margin-top:90px; }
+.sec-head{ text-align:center; max-width:640px; margin:0 auto 3.2rem; }
+.sec-tag{
+  display:inline-flex; align-items:center; gap:0.4rem;
+  font-size:0.82rem; font-weight:600; color:var(--accent-dark);
+  background:var(--accent-soft);
+  padding:0.4rem 0.9rem; border-radius:var(--radius-pill);
+  margin-bottom:1rem;
+}
+.sec-title{
+  font-family:var(--font-disp); font-weight:700;
+  font-size:clamp(1.7rem, 3.6vw, 2.3rem);
+  letter-spacing:-0.01em; margin-bottom:0.6rem;
+}
+.sec-sub{ color:var(--ink-soft); font-size:1rem; }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity 0.55s ease, transform 0.55s ease; }
+.reveal.vis{ opacity:1; transform:translateY(0); }
+
+/* ---------- ABOUT ---------- */
+#about{ background:var(--bg-soft); border-radius:40px; margin:0 1rem; }
+.about-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start;
+}
+.about-card{
+  background:#fff; border-radius:var(--radius-lg); padding:2rem;
+  border:1px solid var(--line);
+}
+.about-card p{ color:var(--ink-soft); margin-bottom:1rem; }
+.about-card p:last-child{ margin-bottom:0; }
+.about-card strong{ color:var(--ink); font-weight:600; }
+
+.info-list{ display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.8rem; }
+.info-row{ display:flex; align-items:center; gap:0.7rem; font-size:0.94rem; color:var(--ink-soft); }
+.info-row svg{ width:17px; height:17px; color:var(--accent); flex-shrink:0; }
+
+.stat-strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:0.9rem; margin-bottom:1.8rem; }
+.stat-box{ background:var(--bg-soft); border-radius:16px; padding:1rem 0.6rem; text-align:center; }
+.stat-val{ font-family:var(--font-disp); font-weight:700; font-size:1.5rem; color:var(--accent); }
+.stat-key{ font-size:0.75rem; color:var(--ink-faint); margin-top:0.2rem; }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:0.5rem; }
+.chip{
+  font-size:0.82rem; font-weight:500; color:var(--ink-soft);
+  background:var(--bg-soft); border:1px solid var(--line);
+  padding:0.4rem 0.85rem; border-radius:var(--radius-pill);
+}
+.skill-label{ font-size:0.82rem; font-weight:600; color:var(--ink-faint); margin:1.3rem 0 0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+.skill-label:first-of-type{ margin-top:0; }
+
+/* ---------- PROJECTS ---------- */
+.proj-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1.4rem; }
+.proj-card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:1.8rem; display:flex; flex-direction:column;
+  transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.proj-card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px rgba(20,23,31,0.08); border-color:var(--accent); }
+.proj-top{ display:flex; align-items:center; justify-content:space-between; gap:0.7rem; margin-bottom:1rem; }
+.proj-type{ font-size:0.74rem; font-weight:600; color:var(--accent-dark); background:var(--accent-soft); padding:0.32rem 0.7rem; border-radius:var(--radius-pill); }
+.proj-status{ font-size:0.74rem; color:var(--ink-faint); font-weight:500; }
+.proj-name{ font-family:var(--font-disp); font-weight:700; font-size:1.15rem; margin-bottom:0.6rem; line-height:1.3; }
+.proj-desc{ font-size:0.92rem; color:var(--ink-soft); margin-bottom:1.2rem; flex-grow:1; }
+.proj-stack{ display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.3rem; }
+.p-tech{ font-size:0.72rem; font-weight:500; color:var(--ink-soft); background:var(--bg-soft); padding:0.28rem 0.65rem; border-radius:var(--radius-pill); }
+.proj-links{ display:flex; gap:1rem; margin-top:auto; }
+.proj-btn{ font-size:0.88rem; font-weight:600; color:var(--accent-dark); display:inline-flex; align-items:center; gap:0.3rem; }
+.proj-btn:hover{ text-decoration:underline; }
+
+/* ---------- EXPERIENCE ---------- */
+.exp-card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:2rem 2.2rem; max-width:820px; margin:0 auto;
+}
+.exp-top{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:0.6rem; margin-bottom:1.3rem; padding-bottom:1.1rem; border-bottom:1px solid var(--line); }
+.exp-role{ font-family:var(--font-disp); font-weight:700; font-size:1.2rem; }
+.exp-company{ color:var(--accent-dark); font-weight:600; }
+.exp-meta{ font-size:0.82rem; color:var(--ink-faint); text-align:right; }
+.exp-bullets{ display:flex; flex-direction:column; gap:0.7rem; margin-bottom:1.4rem; }
+.exp-bullets li{ position:relative; padding-left:1.2rem; font-size:0.93rem; color:var(--ink-soft); }
+.exp-bullets li::before{ content:''; position:absolute; left:0; top:0.6em; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.exp-bullets strong{ color:var(--ink); font-weight:600; }
+
+/* ---------- CONTACT ---------- */
+#contact{ background:var(--bg-soft); border-radius:40px; margin:0 1rem; }
+.contact-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:2.5rem; align-items:start; }
+.clinks{ display:flex; flex-direction:column; gap:0.9rem; }
+.clink{
+  display:inline-flex; align-items:center; gap:0.8rem;
+  background:#fff; border:1px solid var(--line); border-radius:16px;
+  padding:0.95rem 1.2rem; font-size:0.94rem; font-weight:500; color:var(--ink);
+  transition:border-color 0.2s ease, transform 0.2s ease;
+}
+.clink:hover{ border-color:var(--accent); transform:translateX(4px); }
+.cl-icon{ width:38px; height:38px; border-radius:50%; background:var(--accent-soft); color:var(--accent-dark); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.cl-icon svg{ width:18px; height:18px; }
+
+.avail-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg); padding:2rem; }
+.avail-tag{ display:inline-flex; align-items:center; gap:0.5rem; font-size:0.8rem; font-weight:600; color:#1E8A4C; margin-bottom:1.1rem; }
+.avail-tag .dot{ width:8px; height:8px; border-radius:50%; background:#1E8A4C; }
+.avail-card p{ color:var(--ink-soft); font-size:0.93rem; margin-bottom:0.9rem; }
+.avail-card p:last-child{ margin-bottom:0; }
+.avail-card strong{ color:var(--ink); font-weight:600; }
+
+/* ---------- FOOTER ---------- */
+footer{
+  text-align:center; padding:3rem 1.5rem 2.5rem;
+  color:var(--ink-faint); font-size:0.85rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .nav-pill{ display:none; }
+  .hamburger{ display:flex; }
+  .about-grid{ grid-template-columns:1fr; }
+  .proj-grid{ grid-template-columns:1fr; }
+  .contact-grid{ grid-template-columns:1fr; }
+  #about, #contact{ margin:0 0.6rem; border-radius:28px; }
+}
+@media (max-width:560px){
+  .exp-card{ padding:1.5rem; }
+  .exp-meta{ text-align:left; }
+  .stat-strip{ grid-template-columns:repeat(3,1fr); gap:0.5rem; }
 }
 </style>
 </head>
 <body>
 
-<!-- ── 3D NEURAL NET CANVAS ── -->
-<canvas id="cvs3d"></canvas>
-<div class="vignette"></div>
+<div class="topstrip"></div>
 
-<div class="shell">
-
-<!-- ══════════ TOP BAR ══════════ -->
+<!-- ══════════ NAV ══════════ -->
 <nav class="topbar">
-  <div class="logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="3" cy="7" r="1.5"/>
-        <circle cx="11" cy="3" r="1.5"/>
-        <circle cx="11" cy="11" r="1.5"/>
-        <line x1="4.5" y1="7" x2="9.5" y2="3.5"/>
-        <line x1="4.5" y1="7" x2="9.5" y2="10.5"/>
-      </svg>
-    </div>
-    <div class="logo-name">PRANGON<span>.</span>CHAKRABORTY</div>
+  <div class="brand">
+     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://w3.org">
+  <!-- Black Outline Circle -->
+  <circle cx="28" cy="28" r="25" stroke="black" stroke-width="2.5" fill="none"/>
+  <!-- Centered Text -->
+  <text x="28" y="34" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="black" text-anchor="middle">PC</text>
+</svg> 
+ </div>
+
+  <div class="nav-pill" id="navPill">
+    <a href="#about" class="active" data-target="about">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      About
+    </a>
+    <a href="#projects" data-target="projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Projects
+    </a>
+    <a href="#contact" data-target="contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+      Contact
+    </a>
+    <a href="#experience" onclick="closeNav()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12h.01"/></svg>
+    Experience
+  </a>
   </div>
 
-  <ul class="nav-links">
-    <li><a href="#about">about</a></li>
-    <li><a href="#skills">skills</a></li>
-    <li><a href="#projects">projects</a></li>
-    <li><a href="#experience">experience</a></li>
-    <li><a href="#architecture">stack</a></li>
-    <li><a href="#chat-sec">chat</a></li>
-    <li><a href="#contact">contact</a></li>
-  </ul>
+  <div class="nav-social">
+    <a href="https://github.com/PrangonChakraborty-1805085" target="_blank" rel="noopener" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.44-2.71 5.42-5.29 5.7.41.36.78 1.08.78 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.21.67.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/prangon-chakraborty-3511a6211/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
+    </a>
+  </div>
 
-  <button class="nav-cta" onclick="scrollToChat()">💬 Ask About Me</button>
-  <button class="hamburger" id="ham" onclick="toggleNav()" aria-label="Menu">
+  <button class="hamburger" id="ham" onclick="toggleNav()" aria-label="Toggle menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- Mobile nav -->
 <div class="mobile-nav" id="mobileNav">
-  <a href="#about"        onclick="closeNav()">About</a>
-  <a href="#skills"       onclick="closeNav()">Skills</a>
-  <a href="#projects"     onclick="closeNav()">Projects</a>
-  <a href="#experience"   onclick="closeNav()">Experience</a>
-  <a href="#architecture" onclick="closeNav()">Stack</a>
-  <a href="#chat-sec"     onclick="closeNav()">Ask Me</a>
-  <a href="#contact"      onclick="closeNav()">Contact</a>
+  <a href="#about" onclick="closeNav()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    About
+  </a>
+  <a href="#projects" onclick="closeNav()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    Projects
+  </a>
+  <a href="#contact" onclick="closeNav()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+    Contact
+  </a>
+  <a href="#experience" onclick="closeNav()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12h.01"/></svg>
+    Experience
+  </a>
 </div>
 
 <!-- ══════════ HERO ══════════ -->
-<section id="hero">
-  <!-- hero background handled by CSS -->
-
-  <div class="hero-eyebrow">
-    <div class="hero-eyebrow-dot"></div>
-    graph_state · ACTIVE · nodes: 6 · edges: 12
-  </div>
-
-  <h1 class="hero-name">
-    <span class="l1">Prangon Chakraborty</span>
-    <span class="l2">Software Engineer.</span>
-  </h1>
-
-  <p class="hero-sub">
-    Designing graph-orchestrated multi-agent systems &amp; production RAG pipelines.<br>
-    LangGraph · LangChain · FastAPI · Next.js
-  </p>
-
-  <div class="hero-chips">
-    <span class="chip">LangGraph</span>
-    <span class="chip">LangChain</span>
-    <span class="chip">Multi-Agent</span>
-    <span class="chip">RAG Systems</span>
-    <span class="chip">FastAPI</span>
-    <span class="chip">Vector DBs</span>
-    <span class="chip">Next.js</span>
-  </div>
-
-  <div class="hero-actions">
-    <button class="btn-p" onclick="scrollToChat()">Ask me anything</button>
-    <button class="btn-g" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View Projects →</button>
-  </div>
-
-  <div class="scroll-cue">
-    <div class="scroll-line"></div>
-    <span class="scroll-label">traverse graph</span>
+<section class="hero">
+  <h1 class="reveal">Hi, I'm Prangon Chakraborty</h1>
+  <div class="role reveal">Software Development Engineer | Agentic AI </div>
+  <p class="tagline reveal">Engineered intelligent multi-agent systems that automate workflows, power backend infrastructure, and leverage AI innovation at production scale.</p>
+  <div class="hero-actions reveal">
+    <a href="#projects" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      View Projects
+    </a>
+    <a href="https://drive.google.com/file/d/165Vybm9IbkKh2YPX8WDrNzUJpmovLx4B/view?usp=sharing" target="_blank" rel="noopener" class="btn btn-outline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      My Resume
+    </a>
   </div>
 </section>
 
 <!-- ══════════ ABOUT ══════════ -->
 <section class="sec" id="about">
-  <div class="sec-inner">
-    <div class="sec-label reveal">
-      <span class="sec-id">node_01</span>
-      <div class="sec-rule"></div>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag reveal">About Me</div>
+      <div class="sec-title reveal">A little about me</div>
+      <p class="sec-sub reveal">Backend systems, multi-agent AI, and infrastructure that holds up at scale.</p>
     </div>
-    <div class="sec-title reveal">About Me</div>
-    <p class="sec-sub reveal">state: identity_resolved · type: PersonNode</p>
 
-    <div class="about-layout">
-      <div class="about-sidebar reveal">
-        <div class="avatar-node">PC</div>
-        <div class="sidebar-item"><div class="sidebar-dot"></div>Dhaka, Bangladesh</div>
-        <div class="sidebar-item"><div class="sidebar-dot"></div>Open to new opportunities</div>
-        <div class="sidebar-item"><div class="sidebar-dot"></div>2+ yrs Software Engineering</div>
-        <div class="sidebar-item"><div class="sidebar-dot"></div>BSc in Computer Science and Engineering</div>
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="info-list">
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            Dhaka, Bangladesh
+          </div>
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Open to new opportunities
+          </div>
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg>
+            BSc in CSE — BUET, 2024
+          </div>
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+            2+ years in Software Engineering
+          </div>
+        </div>
+
+        <div class="stat-strip">
+          <div class="stat-box"><div class="stat-val">2+</div><div class="stat-key">Years Experience</div></div>
+          <div class="stat-box"><div class="stat-val">5+</div><div class="stat-key">Projects Built</div></div>
+          <div class="stat-box"><div class="stat-val">100+</div><div class="stat-key">Issues Resolved</div></div>
+        </div>
+
+        <div class="skill-label">Core Strengths</div>
+        <div class="chip-row">
+          <span class="chip">Agentic AI Systems</span>
+          <span class="chip">System Design</span>
+          <span class="chip">Data Structure and Algorithms</span>
+          <span class="chip">Distributed Systems</span>
+        </div>
+        <div class="skill-label">Tools &amp; Stack</div>
+        <div class="chip-row">
+          <span class="chip">Python</span>
+          <span class="chip">LangGraph</span>
+          <span class="chip">LangChain</span>
+          <span class="chip">FastAPI</span>
+          <span class="chip">PostgreSQL</span>
+          <span class="chip">Redis</span>
+          <span class="chip">AWS</span>
+          <span class="chip">Docker</span>
+          <span class="chip">Kubernetes</span>
+          <span class="chip">Next.js</span>
+        </div>
       </div>
 
       <div class="about-card reveal">
-        <div class="node-header">
-          <span class="n-tag">PersonNode</span>
-          <span class="n-id">id: prangon_ck_001</span>
-          <span class="n-status">active</span>
-        </div>
-        <div class="about-text">
-          <p>I'm a <strong>Software Engineer</strong> who loves to work on LLM orchestration, langGraph-based agent design, and production infrastructure.</p>
-          <p>My core work involves designing <strong>LangGraph orchestration agents</strong>, connecting them to <strong>Knowledge Bases</strong>, and making AI systems observable, reliable, and genuinely useful to end users.</p>
-          <p>Currently developing <strong>Agentic AI</strong> for healthcare systems in IQVIA.</p>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-cell"><div class="stat-val">2+</div><div class="stat-key">Years</div></div>
-          <div class="stat-cell"><div class="stat-val">4+</div><div class="stat-key">Projects</div></div>
-          <div class="stat-cell"><div class="stat-val">3+</div><div class="stat-key">Languages Proficiency</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ SKILLS ══════════ -->
-<section class="sec" id="skills">
-  <div class="sec-inner">
-    <div class="sec-label reveal"><span class="sec-id">node_02</span><div class="sec-rule"></div></div>
-    <div class="sec-title reveal">Skills Graph</div>
-    <p class="sec-sub reveal">state: capabilities_mapped · 34 edge connections</p>
-
-    <div class="skill-grid">
-      <div class="skill-card reveal" style="--fill:95%">
-        <div class="skill-card-head">
-          <div class="skill-card-name">Agent Frameworks</div>
-          <div class="skill-icon">🔗</div>
-        </div>
-        <div class="stags">
-          <span class="stag st-b">LangGraph</span>
-          <span class="stag st-b">LangChain</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--fill:92%">
-        <div class="skill-card-head">
-          <div class="skill-card-name">Backend</div>
-          <div class="skill-icon">⚙️</div>
-        </div>
-        <div class="stags">
-          <span class="stag st-g">Python</span>
-          <span class="stag st-g">FastAPI</span>
-          <span class="stag st-g">Node.js</span>
-          <span class="stag st-g">Redis</span>
-          <span class="stag st-g">PostgreSQL</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--fill:85%">
-        <div class="skill-card-head">
-          <div class="skill-card-name">Frontend</div>
-          <div class="skill-icon">🖥️</div>
-        </div>
-        <div class="stags">
-          <span class="stag st-b">Next.js</span>
-          <span class="stag st-b">React</span>
-          <span class="stag st-b">TypeScript</span>
-          <span class="stag st-b">TailwindCSS</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--fill:80%">
-        <div class="skill-card-head">
-          <div class="skill-card-name">MLOps & Infra</div>
-          <div class="skill-icon">🚀</div>
-        </div>
-        <div class="stags">
-          <span class="stag st-w">LangSmith</span>
-          <span class="stag st-w">MLflow</span>
-          <span class="stag st-w">Docker</span>
-          <span class="stag st-w">Kubernetes</span>
-          <span class="stag st-w">AWS</span>
-          <span class="stag st-w">Vercel</span>
-        </div>
+        <p>I'm a <strong>Software Development Engineer</strong> with a strong grounding in data structures and algorithms, and a focus on building backend systems that hold up in production.</p>
+        <p>At <strong>IQVIA</strong>, I design and build multi-agent orchestration systems with <strong>LangGraph</strong>, architect scalable services on <strong>AWS</strong>, and optimize data pipelines that process millions of records for pharmaceutical analytics workloads.</p>
+        <p>I care about writing efficient, well-tested code, and about AI integrations that stay reliable as they scale — from agent-to-agent protocols to production-grade retrieval systems.</p>
       </div>
     </div>
   </div>
@@ -1861,169 +465,100 @@ footer {
 
 <!-- ══════════ PROJECTS ══════════ -->
 <section class="sec" id="projects">
-  <div class="sec-inner">
-    <div class="sec-label reveal"><span class="sec-id">node_03</span><div class="sec-rule"></div></div>
-    <div class="sec-title reveal">Project Graph</div>
-    <p class="sec-sub reveal">state: shipped · 5 nodes · all edges resolved</p>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag reveal">Projects</div>
+      <div class="sec-title reveal">Things I've built</div>
+      <p class="sec-sub reveal">Multi-agent systems, AI integrations, and full-stack applications.</p>
+    </div>
 
     <div class="proj-grid">
+
       <div class="proj-card reveal">
-        <div class="proj-row">
-          <span class="proj-type">Multi-Agent System</span>
-          <span class="proj-live">production</span>
-        </div>
-        <div class="proj-name">PhD Hunter - AI-Powered University &amp; Professor Discovery for Graduate Applications</div>
-        <div class="proj-desc">A multi-agent AI system where a core orchestrator dynamically discovers and delegates to four specialised agents — each one responsible for a slice of the application pipeline. The agents communicate over Google's open Agent-to-Agent (A2A) protocol, making the system modular, observable, and extensible.</div>
-        <div class="proj-stack">
-          <span class="p-tech">LangGraph</span><span class="p-tech">Openrouter</span><span class="p-tech">Tavily</span><span class="p-tech">FastAPI</span><span class="p-tech">Streamlit</span><span class="p-tech">Python</span>
-        </div>
+        <div class="proj-top"><span class="proj-type">Multi-Agent System</span><span class="proj-status">production</span></div>
+        <div class="proj-name">PhD Hunter — AI-Powered University &amp; Professor Discovery</div>
+        <div class="proj-desc">A multi-agent system where a core orchestrator dynamically discovers and delegates to four specialised agents, each handling a slice of the graduate-application pipeline. Agents communicate over Google's open A2A protocol, keeping the system modular, observable, and extensible.</div>
+        <div class="proj-stack"><span class="p-tech">LangGraph</span><span class="p-tech">A2A Protocol</span><span class="p-tech">Python</span><span class="p-tech">Streamlit</span></div>
         <div class="proj-links">
-          <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/phd_hunter" target="_blank" rel="noopener">GitHub →</a><a class="proj-btn" href="https://phd-hunter.streamlit.app/" target="_blank" rel="noopener">Demo →</a>
+          <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/phd_hunter" target="_blank" rel="noopener">GitHub →</a>
+          <a class="proj-btn" href="https://phd-hunter.streamlit.app/" target="_blank" rel="noopener">Demo →</a>
         </div>
       </div>
 
       <div class="proj-card reveal">
-        <div class="proj-row">
-          <span class="proj-type">Multi-Agent System with Graph Memory</span>
-          <span class="proj-live">production</span>
-        </div>
+        <div class="proj-top"><span class="proj-type">Multi-Agent System</span><span class="proj-status">production</span></div>
         <div class="proj-name">VERTEX — AI Financial Intelligence Engine</div>
-        <div class="proj-desc">A multi-agent orchestrator agent collaborating with specialized agents through A2A protocol and establishing graph memory.</div>
-        <div class="proj-stack">
-          <span class="p-tech">LangChain</span><span class="p-tech">LangGraph</span><span class="p-tech">FastAPI</span><span class="p-tech">ChromaDB</span><span class="p-tech">NetworkX + Pickle</span><span class="p-tech">Python</span>
-        </div>
+        <div class="proj-desc">A multi-agent orchestrator that collaborates with specialised agents through the A2A protocol and maintains a graph-based memory layer across the conversation.</div>
+        <div class="proj-stack"><span class="p-tech">LangGraph</span><span class="p-tech">A2A Protocol</span><span class="p-tech">Graph Memory</span><span class="p-tech">Python</span></div>
         <div class="proj-links">
-          <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/vertex-ai" target="_blank" rel="noopener">GitHub →</a><a class="proj-btn" href="https://vertex-ai.streamlit.app/" target="_blank" rel="noopener">Demo →</a>
+          <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/vertex-ai" target="_blank" rel="noopener">GitHub →</a>
+          <a class="proj-btn" href="https://vertex-ai.streamlit.app/" target="_blank" rel="noopener">Demo →</a>
         </div>
       </div>
 
       <div class="proj-card reveal">
-        <div class="proj-row">
-          <span class="proj-type">AI Interviewer with Dynamic Question Generation</span>
-          <span class="proj-live">personal project</span>
-        </div>
-        <div class="proj-name">Tech-Pulse AI - An AI Interviewer</div>
-        <div class="proj-desc">An AI Intelligent Interview System that dynamically generates questions based on the role and candidate's background. In real-time video conferencing, candidates join a call and the AI interviewer provides voice and chat interaction with live speech-to-text for candidate responses.</div>
-        <div class="proj-stack">
-          <span class="p-tech">OpenAI API</span><span class="p-tech">Nextjs</span><span class="p-tech">StreamApp</span><span class="p-tech">Web Speech API</span><span class="p-tech">EmailJS</span>
-        </div>
+        <div class="proj-top"><span class="proj-type">AI Interviewer</span><span class="proj-status">personal project</span></div>
+        <div class="proj-name">Tech-Pulse AI — An AI Interviewer</div>
+        <div class="proj-desc">An intelligent interview system that dynamically generates questions based on the role and candidate background. Runs over real-time video conferencing, with voice/chat interaction and live speech-to-text.</div>
+        <div class="proj-stack"><span class="p-tech">OpenAI API</span><span class="p-tech">Next.js</span><span class="p-tech">Web Speech API</span><span class="p-tech">EmailJS</span></div>
         <div class="proj-links">
           <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/Tech-Pulse-Ai" target="_blank" rel="noopener">GitHub →</a>
         </div>
       </div>
 
       <div class="proj-card reveal">
-        <div class="proj-row">
-          <span class="proj-type">Algorithmic Tour Planner</span>
-          <span class="proj-live">term project</span>
-        </div>
-        <div class="proj-name">Visit Bangladesh - An Algorithm Based Tour Planner</div>
-        <div class="proj-desc">A tour planner app that generated optimized itineraries for tourists based on heuristic travelling salesman algorithm.</div>
-        <div class="proj-stack">
-          <span class="p-tech">Nextjs</span><span class="p-tech">Java Spring Boot</span>
-        </div>
+        <div class="proj-top"><span class="proj-type">Algorithmic Planner</span><span class="proj-status">term project</span></div>
+        <div class="proj-name">Visit Bangladesh — Algorithm-Based Tour Planner</div>
+        <div class="proj-desc">A tour planner that generates optimized multi-city itineraries for tourists using a heuristic travelling-salesman algorithm.</div>
+        <div class="proj-stack"><span class="p-tech">Next.js</span><span class="p-tech">Spring Boot</span><span class="p-tech">TSP Heuristics</span></div>
         <div class="proj-links">
           <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/Visit_Bangladesh_Frontend" target="_blank" rel="noopener">GitHub →</a>
         </div>
       </div>
 
       <div class="proj-card reveal">
-        <div class="proj-row">
-          <span class="proj-type">Blockchain</span>
-          <span class="proj-live">Blockchain Hackathon Project</span>
-        </div>
-        <div class="proj-name">ArtFlair - A Blockchain based Digital Art Gallery</div>
-        <div class="proj-desc">A blockchain-based digital art gallery that allows artists to mint and sell their digital artworks as NFTs.</div>
-        <div class="proj-stack">
-          <span class="p-tech">Nextjs</span><span class="p-tech">Ethereum</span><span class="p-tech">Remix IDE</span>
-        </div>
+        <div class="proj-top"><span class="proj-type">Blockchain</span><span class="proj-status">hackathon</span></div>
+        <div class="proj-name">ArtFlair — Blockchain-Based Digital Art Gallery</div>
+        <div class="proj-desc">A blockchain-based digital art gallery that lets artists mint and sell their artwork as NFTs.</div>
+        <div class="proj-stack"><span class="p-tech">Next.js</span><span class="p-tech">Ethereum</span><span class="p-tech">Remix IDE</span></div>
         <div class="proj-links">
           <a class="proj-btn" href="https://github.com/PrangonChakraborty-1805085/ITVerse_Blockchain_Hackathon" target="_blank" rel="noopener">GitHub →</a>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
 <!-- ══════════ EXPERIENCE ══════════ -->
 <section class="sec" id="experience">
-  <div class="sec-inner">
-    <div class="sec-label reveal"><span class="sec-id">node_04</span><div class="sec-rule"></div></div>
-    <div class="sec-title reveal">Experience Graph</div>
-    <p class="sec-sub reveal">state: trajectory_mapped · direction: chronological</p>
-
-    <div class="exp-wrap">
-      <div class="exp-row reveal">
-        <div class="exp-node">01</div>
-        <div class="exp-card">
-          <div class="exp-meta">
-            <span class="exp-period">2024 — Present</span>
-            <span class="exp-kind">full-time</span>
-          </div>
-          <div class="exp-role">Software Development Engineer 1</div>
-          <div class="exp-company">IQVIA</div>
-          <div class="exp-desc">Working as a Software Development Engineer 1 at IQVIA, I am responsible for designing and implementing Agentic AI solutions that enhance our pharmaceutical data analytics capabilities. My role involves collaborating with cross-functional teams to develop scalable agents, optimizing existing systems for performance, and ensuring the reliability of our data processing pipelines and thus contributing to the advancement of healthcare analytics.</div>
-          <div class="proj-stack">
-            <span class="p-tech">Python</span><span class="p-tech">LangGraph</span><span class="p-tech">LangChain</span><span class="p-tech">LangSmith</span><span class="p-tech">Cursor IDE</span><span class="p-tech">AWS</span><span class="p-tech">Docker</span><span class="p-tech">Kubernetes</span><span class="p-tech">Claude</span>
-          </div>
-        </div>
-      </div>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag reveal">Experience</div>
+      <div class="sec-title reveal">Where I've worked</div>
+      <p class="sec-sub reveal">Building production AI infrastructure that scales.</p>
     </div>
-  </div>
-</section>
 
-<!-- ══════════ CHAT ══════════ -->
-<section class="sec" id="chat-sec">
-  <div class="sec-inner">
-    <div class="sec-label reveal"><span class="sec-id">node_05</span><div class="sec-rule"></div></div>
-    <div class="sec-title reveal" style="text-align:center">Ask About Me</div>
-    <p class="sec-sub reveal" style="text-align:center;margin-bottom:3rem">Powered by Groq · LangGraph RAG agent · real-time retrieval from my knowledge base</p>
-
-    <div class="chat-wrap">
-      <div class="chat-node reveal">
-        <div class="chat-nhead">
-          <div class="chat-pulse"></div>
-          <div class="chat-ntitle">ChatNode :: prangon_portfolio_agent</div>
-          <div class="chat-nmeta">
-            <div class="chat-model">claude-sonnet-4-20250514</div>
-            <div class="chat-online">online</div>
-          </div>
+    <div class="exp-card reveal">
+      <div class="exp-top">
+        <div>
+          <div class="exp-role">Software Development Engineer I</div>
+          <div class="exp-company">IQVIA</div>
         </div>
-
-        <div class="trace-bar">
-          <div class="trace-step" style="display:flex;align-items:center;gap:0.4rem">
-            <div class="t-node done" id="t0">input_node</div>
-            <div class="t-arr">→</div>
-            <div class="t-node" id="t1">retrieve_node</div>
-            <div class="t-arr">→</div>
-            <div class="t-node" id="t2">generate_node</div>
-            <div class="t-arr">→</div>
-            <div class="t-node" id="t3">output_node</div>
-          </div>
-          <div style="margin-left:auto;font-family:var(--font-mono);font-size:0.56rem;color:var(--text-3);white-space:nowrap" id="traceElapsed"></div>
-        </div>
-
-        <div class="chat-msgs" id="chatMsgs">
-          <div class="msg-row">
-            <div class="m-av ai">AG</div>
-            <div class="m-body">
-              <div class="m-meta">prangon_agent · just now</div>
-              <div class="m-bubble ai-b">Hey! I'm Prangon's portfolio agent — powered by a LangGraph RAG pipeline over his projects, skills, and experience. Ask me anything about his background or what he's built.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="chat-sugg">
-          <button class="sq" onclick="askQ('What is your experience with LangGraph?')">LangGraph experience?</button>
-          <button class="sq" onclick="askQ('What production AI systems have you shipped?')">Production systems?</button>
-          <button class="sq" onclick="askQ('How do you approach RAG pipeline design?')">RAG approach?</button>
-          <button class="sq" onclick="askQ('What makes you a strong AI engineer?')">Why hire you?</button>
-        </div>
-
-        <div class="chat-inp-row">
-          <input class="chat-inp" id="chatInp" type="text" placeholder="Ask about projects, skills, experience…" />
-          <button class="chat-send" id="chatSend" onclick="sendChat()">Send →</button>
-        </div>
+        <div class="exp-meta">Jul 2024 — Present<br>Dhaka, Bangladesh · Full-time</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Architected and deployed a scalable <strong>multi-agent orchestration system</strong> using LangGraph on AWS (EC2, Docker, Kubernetes), enabling reliable processing of large-scale pharmaceutical analytics workloads in production.</li>
+        <li>Designed a <strong>distributed agent system architecture</strong> spanning multiple microservices — guardrails, agent orchestration, and backend APIs — improving system modularity and enabling independent scaling of components.</li>
+        <li>Built a data-processing pipeline within the agent system that reduced insight-generation time from 60s to 20s (<strong>3x improvement</strong>) while processing millions of database records.</li>
+        <li>Integrated the <strong>A2A (Agent-to-Agent) protocol</strong> per client requirements, enabling interoperability between IQVIA agents and external AI agents — reducing individual agent load by up to <strong>40%</strong>.</li>
+        <li>Optimized complex DBMS queries and data pipelines for cost-prediction analytics over millions of records, improving processing efficiency by <strong>15%</strong>.</li>
+        <li>Increased unit test coverage by <strong>40%</strong>, reducing production defects and improving deployment confidence.</li>
+        <li>Triaged and resolved <strong>100+ production issues</strong>, earning <strong>Top Performer of the Sprint</strong> recognition.</li>
+        <li>Stepped into <strong>team lead responsibilities</strong> across multiple projects, driving sprint execution and presenting technical POCs at inter-team town-halls.</li>
+      </ul>
+      <div class="proj-stack">
+        <span class="p-tech">Python</span><span class="p-tech">LangGraph</span><span class="p-tech">LangChain</span><span class="p-tech">LangSmith</span><span class="p-tech">FastAPI</span><span class="p-tech">A2A Protocol</span><span class="p-tech">PostgreSQL</span><span class="p-tech">Redis</span><span class="p-tech">AWS</span><span class="p-tech">Docker</span><span class="p-tech">Kubernetes</span>
       </div>
     </div>
   </div>
@@ -2031,35 +566,39 @@ footer {
 
 <!-- ══════════ CONTACT ══════════ -->
 <section class="sec" id="contact">
-  <div class="sec-inner">
-    <div class="sec-label reveal"><span class="sec-id">node_06</span><div class="sec-rule"></div></div>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag reveal">Contact</div>
+      <div class="sec-title reveal">Let's build something reliable</div>
+      <p class="sec-sub reveal">Open to Software Engineering roles, backend/systems work, and applied AI infrastructure engagements.</p>
+    </div>
 
-    <div class="contact-layout">
-      <div class="reveal">
-        <div class="contact-hl">Let's Build<br><span>Something</span><br>Remarkable.</div>
-        <p class="contact-body">Highly ambitious for AI engineering roles, consulting on agent architectures, and ambitious open-source collaborations. If you're building the next wave of AI systems, let's connect.</p>
-        <div class="clinks">
-          <a href="mailto:prangonchakraborty2000@gmail.com" class="clink"><div class="cl-icon">✉</div>prangonchakraborty2000@gmail.com</a>
-          <a href="https://github.com/PrangonChakraborty-1805085" class="clink"><div class="cl-icon">⬡</div>https://github.com/PrangonChakraborty-1805085</a>
-          <a href="https://www.linkedin.com/in/prangon-chakraborty-3511a6211/" class="clink"><div class="cl-icon">◈</div>https://www.linkedin.com/in/prangon-chakraborty-3511a6211/</a>
-        </div>
+    <div class="contact-grid">
+      <div class="clinks reveal">
+        <a href="mailto:prangonchakraborty2000@gmail.com" class="clink">
+          <div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></div>
+          prangonchakraborty2000@gmail.com
+        </a>
+        <a href="https://github.com/PrangonChakraborty-1805085" class="clink" target="_blank" rel="noopener">
+          <div class="cl-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.44-2.71 5.42-5.29 5.7.41.36.78 1.08.78 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.21.67.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg></div>
+          github.com/PrangonChakraborty-1805085
+        </a>
+        <a href="https://www.linkedin.com/in/prangon-chakraborty-3511a6211/" class="clink" target="_blank" rel="noopener">
+          <div class="cl-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg></div>
+          linkedin.com/in/prangon-chakraborty
+        </a>
+        <a href="https://drive.google.com/file/d/165Vybm9IbkKh2YPX8WDrNzUJpmovLx4B/view?usp=sharing" class="clink" target="_blank" rel="noopener">
+          <div class="cl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          My Resume
+        </a>
       </div>
 
       <div class="reveal">
-        <div class="about-card">
-          <div class="node-header">
-            <span class="n-tag">AvailabilityNode</span>
-            <span class="n-status">available</span>
-          </div>
-          <div class="about-text">
-            <p>Currently open to <strong>full-time AI and Software engineering roles</strong> and <strong>consulting engagements</strong> around LangGraph/LangChain agent systems.</p>
-            <p>Ideal work involves <strong>complex multi-agent architectures</strong>, production RAG systems, or teams pushing the frontier of LLM orchestration.</p>
-            <p>Response time: <strong>within 24 hours</strong> · Timezone: BST</p>
-          </div>
-          <div class="stat-grid" style="grid-template-columns:1fr 1fr">
-            <div class="stat-cell"><div class="stat-val" style="font-size:1.2rem">Remote/On-site</div><div class="stat-key">Preferred</div></div>
-            <div class="stat-cell"><div class="stat-val" style="font-size:1.2rem">~24h</div><div class="stat-key">Response</div></div>
-          </div>
+        <div class="avail-card">
+          <div class="avail-tag"><span class="dot"></span>Available</div>
+          <p>Currently open to <strong>full-time Software Engineering roles</strong>, particularly ones centered on backend systems, distributed architecture, and applied AI infrastructure.</p>
+          <p>Comfortable working across <strong>data structures, system design, and production-scale agent orchestration</strong>.</p>
+          <p>Response time: <strong>within 24 hours</strong> · Timezone: BST</p>
         </div>
       </div>
     </div>
@@ -2067,426 +606,46 @@ footer {
 </section>
 
 <footer>
-  <div class="ft">© 2026 Prangon Chakraborty · Software Engineer · Built graph-first</div>
+  © 2026 Prangon Chakraborty. All rights reserved.
 </footer>
 
-</div><!-- /shell -->
-
 <script>
-/* ══════════════════════════════════════════════════
-   3D ROTATING NEURAL-NET WIREFRAME
-   Pure canvas — no THREE.js dependency
-══════════════════════════════════════════════════ */
-(function() {
-  const cvs = document.getElementById('cvs3d');
-  const ctx = cvs.getContext('2d');
+function toggleNav(){
+  document.getElementById('ham').classList.toggle('open');
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+function closeNav(){
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('mobileNav').classList.remove('open');
+}
 
-  let W, H, raf;
-
-  /* ── Node positions in 3D ── */
-  const NODE_COUNT  = 55;
-  const LAYER_COUNT = 5;                    // "layers" like a neural net
-  const EDGE_DIST   = 2.6;                  // max distance to connect
-
-  let nodes3d = [];
-  let edges3d = [];
-
-  /* Rotation state */
-  let rotY = 0, rotX = 0.18;
-  let targetRotY = 0;
-  let mouseX = 0, mouseY = 0;
-
-  const COLORS = [
-    'rgba(16,185,129,',   // emerald
-    'rgba(52,211,153,',   // emerald bright
-    'rgba(56,189,248,',   // sky
-    'rgba(16,185,129,',   // emerald (weighted more)
-  ];
-
-  function resize() {
-    W = cvs.width  = window.innerWidth;
-    H = cvs.height = window.innerHeight;
-  }
-
-  function initNodes() {
-    nodes3d = [];
-    edges3d  = [];
-
-    /* Distribute nodes across layers — like a neural net cross-section */
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const layer = Math.floor(i / (NODE_COUNT / LAYER_COUNT));
-      const x = (layer / (LAYER_COUNT - 1) - 0.5) * 4;
-      const y = (Math.random() - 0.5) * 3.2;
-      const z = (Math.random() - 0.5) * 3.2;
-      nodes3d.push({
-        ox: x, oy: y, oz: z,  // original position
-        x, y, z,               // rotated position
-        r: Math.random() * 1.8 + 0.8,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        pulse: Math.random() * Math.PI * 2,
-        pSpeed: 0.012 + Math.random() * 0.015,
-        layer,
-      });
-    }
-
-    /* Build edges — prefer same or adjacent layers */
-    for (let i = 0; i < nodes3d.length; i++) {
-      for (let j = i + 1; j < nodes3d.length; j++) {
-        const a = nodes3d[i], b = nodes3d[j];
-        const layerDiff = Math.abs(a.layer - b.layer);
-        if (layerDiff > 1) continue;
-        const dx = a.ox - b.ox, dy = a.oy - b.oy, dz = a.oz - b.oz;
-        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-        if (dist < EDGE_DIST) {
-          edges3d.push([i, j, dist]);
-        }
+(function(){
+  const sections = document.querySelectorAll('.sec[id]');
+  const navLinks = document.querySelectorAll('.nav-pill a');
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        navLinks.forEach(link=>{
+          link.classList.toggle('active', link.dataset.target === id);
+        });
       }
-    }
-  }
-
-  /* Rotation matrix — Y axis (main spin) + X axis (tilt) */
-  function rotatePoint(ox, oy, oz, ry, rx) {
-    // Rotate around Y
-    const cosY = Math.cos(ry), sinY = Math.sin(ry);
-    let x1 =  ox * cosY + oz * sinY;
-    let y1 =  oy;
-    let z1 = -ox * sinY + oz * cosY;
-    // Rotate around X
-    const cosX = Math.cos(rx), sinX = Math.sin(rx);
-    let x2 = x1;
-    let y2 = y1 * cosX - z1 * sinX;
-    let z2 = y1 * sinX + z1 * cosX;
-    return [x2, y2, z2];
-  }
-
-  /* Project 3D → 2D */
-  function project(x, y, z) {
-    const fov   = Math.min(W, H) * 0.38;
-    const depth = z + 6;                   // push away from camera
-    const px = x / depth * fov + W * 0.5;
-    const py = y / depth * fov + H * 0.5;
-    const scale = fov / depth;
-    return { px, py, scale, depth };
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    /* Gently drift rotY — very slow, premium feel */
-    rotY += 0.0006;
-    const targetRX = 0.18 + (mouseY / H - 0.5) * 0.12;
-    const targetRY = rotY   + (mouseX / W - 0.5) * 0.2;
-    rotX += (targetRX - rotX) * 0.03;
-
-    /* Rotate all nodes */
-    for (const n of nodes3d) {
-      n.pulse += n.pSpeed;
-      const [rx, ry, rz] = rotatePoint(n.ox, n.oy, n.oz, targetRY, rotX);
-      n.x = rx; n.y = ry; n.z = rz;
-    }
-
-    /* Sort by Z (painter's algorithm — draw far-away first) */
-    const sorted = nodes3d.map((n,i) => ({...n, idx:i})).sort((a,b) => b.z - a.z);
-    const idxMap = {};
-    sorted.forEach((n,i) => { idxMap[n.idx] = n; });
-
-    /* Draw edges */
-    for (const [ai, bi, origDist] of edges3d) {
-      const a = nodes3d[ai], b = nodes3d[bi];
-      const pa = project(a.x, a.y, a.z);
-      const pb = project(b.x, b.y, b.z);
-
-      /* Fade edge based on average depth */
-      const avgDepth = (a.z + b.z) * 0.5;
-      const depthFade = Math.max(0, Math.min(1, (avgDepth + 3.5) / 5));
-      const alpha = depthFade * 0.55; /* reduced — CSS opacity does the rest */
-
-      ctx.beginPath();
-      ctx.moveTo(pa.px, pa.py);
-      ctx.lineTo(pb.px, pb.py);
-      ctx.strokeStyle = `rgba(16,185,129,${alpha})`;
-      ctx.lineWidth = depthFade * 1.2;
-      ctx.stroke();
-    }
-
-    /* Draw nodes */
-    for (const n of sorted) {
-      const { px, py, scale, depth } = project(n.x, n.y, n.z);
-      if (px < -20 || px > W+20 || py < -20 || py > H+20) continue;
-
-      const glow = (Math.sin(n.pulse) + 1) * 0.5;
-      const depthFade = Math.max(0.2, Math.min(1, (n.z + 3.5) / 5));
-      const r = n.r * scale * 3.0;
-      const alpha = depthFade * (0.55 + glow * 0.45);
-
-      /* Outer glow ring */
-      if (r > 2) {
-        ctx.beginPath();
-        ctx.arc(px, py, r * 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = n.color + (depthFade * 0.06) + ')';
-        ctx.fill();
-      }
-
-      /* Core node */
-      ctx.beginPath();
-      ctx.arc(px, py, r, 0, Math.PI * 2);
-      ctx.fillStyle = n.color + alpha + ')';
-      ctx.fill();
-    }
-
-    raf = requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', () => {
-    cancelAnimationFrame(raf);
-    resize();
-    draw();
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-
-  resize();
-  initNodes();
-  draw();
+    });
+  }, { rootMargin:'-40% 0px -55% 0px', threshold:0 });
+  sections.forEach(sec=>spy.observe(sec));
 })();
 
-/* ══════════════════════════════════════════════════
-   SCROLL REVEAL
-══════════════════════════════════════════════════ */
-const revObs = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('vis'), i * 55);
-      revObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
-
-/* Skill bar fill trigger */
-const skillObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) skillObs.unobserve(e.target);
-  });
-}, { threshold: 0.3 });
-
-document.querySelectorAll('.skill-card').forEach(n => skillObs.observe(n));
-
-/* ══════════════════════════════════════════════════
-   MOBILE NAV
-══════════════════════════════════════════════════ */
-function toggleNav() { document.getElementById('mobileNav').classList.toggle('open'); }
-function closeNav()  { document.getElementById('mobileNav').classList.remove('open'); }
-
-function scrollToChat() {
-  document.getElementById('chat-sec').scrollIntoView({ behavior: 'smooth' });
-  setTimeout(() => document.getElementById('chatInp').focus(), 700);
-}
-
-/* ══════════════════════════════════════════════════
-   CHAT — REAL LANGGRAPH SSE CLIENT
-   Connects to FastAPI /chat/stream endpoint.
-   Each SSE event from the server lights up the
-   trace bar in sync with actual graph execution.
-
-   To run locally:
-     cd portfolio-agent && docker-compose up
-   Then set AGENT_URL below to http://localhost:8000
-
-   In production: set AGENT_URL to your Render/Railway URL.
-══════════════════════════════════════════════════ */
-
-const AGENT_URL = 'https://portfolio-backend-ersz.onrender.com';   // ← change to your deployed backend URL
-
-const msgsEl  = document.getElementById('chatMsgs');
-const inp     = document.getElementById('chatInp');
-const sendBtn = document.getElementById('chatSend');
-
-/* Session ID persisted in sessionStorage so memory survives page refresh
-   but starts fresh on a new browser tab. */
-let SESSION_ID = sessionStorage.getItem('portfolio_session') || null;
-
-/* Map server node names → trace bar element IDs */
-const NODE_MAP = {
-  input_node:    't0',
-  retrieve_node: 't1',
-  generate_node: 't2',
-  output_node:   't3',
-};
-const NODE_ORDER = ['t0','t1','t2','t3'];
-
-/* ── Trace bar ── */
-function setTrace(activeElemId) {
-  const activeIdx = NODE_ORDER.indexOf(activeElemId);
-  NODE_ORDER.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.className = 't-node';
-    if (id === activeElemId)  el.classList.add('active');
-    else if (i < activeIdx)   el.classList.add('done');
-  });
-}
-
-function resetTrace() {
-  NODE_ORDER.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.className = 't-node';
-  });
-}
-
-function allTraceDone() {
-  NODE_ORDER.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.className = 't-node done'; }
-  });
-}
-
-/* ── Messages ── */
-function addMsg(role, text) {
-  const isUser = role === 'user';
-  const d = document.createElement('div');
-  d.className = 'msg-row' + (isUser ? ' usr' : '');
-  // Render newlines as <br>
-  const safeText = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
-  d.innerHTML = `
-    <div class="m-av ${isUser ? 'you' : 'ai'}">${isUser ? 'YOU' : 'AG'}</div>
-    <div class="m-body">
-      <div class="m-meta">${isUser ? 'visitor' : 'alex_agent'} · just now</div>
-      <div class="m-bubble ${isUser ? 'usr-b' : 'ai-b'}">${safeText}</div>
-    </div>`;
-  msgsEl.appendChild(d);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-}
-
-function showTyping() {
-  removeTyping();
-  const d = document.createElement('div');
-  d.id = 'typing';
-  d.className = 'msg-row';
-  d.innerHTML = `
-    <div class="m-av ai">AG</div>
-    <div class="typing-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div>`;
-  msgsEl.appendChild(d);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-}
-
-function removeTyping() {
-  const t = document.getElementById('typing');
-  if (t) t.remove();
-}
-
-/* ── Elapsed time display in trace bar ── */
-function updateElapsed(ms) {
-  const el = document.getElementById('traceElapsed');
-  if (el) el.textContent = `${ms}s`;
-}
-
-/* ── Main send function — uses SSE ── */
-async function sendChat() {
-  const q = inp.value.trim();
-  if (!q || sendBtn.disabled) return;
-  inp.value = '';
-  sendBtn.disabled = true;
-
-  addMsg('user', q);
-  resetTrace();
-  setTrace('t0');   // input_node immediately lights up
-  showTyping();
-
-  try {
-    const res = await fetch(`${AGENT_URL}/chat/stream`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
-      body: JSON.stringify({
-        session_id: SESSION_ID,
-        question:   q,
-      }),
-    });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const reader  = res.body.getReader();
-    const decoder = new TextDecoder();
-    let   buffer  = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-
-      // SSE frames are separated by double newline
-      const frames = buffer.split('\n\n');
-      buffer = frames.pop();  // keep incomplete frame
-
-      for (const frame of frames) {
-        if (!frame.trim()) continue;
-
-        // Parse SSE frame
-        let eventType = 'message';
-        let dataStr   = '';
-
-        for (const line of frame.split('\n')) {
-          if (line.startsWith('event: ')) eventType = line.slice(7).trim();
-          if (line.startsWith('data: '))  dataStr   = line.slice(6).trim();
-        }
-
-        if (!dataStr) continue;
-        let payload;
-        try { payload = JSON.parse(dataStr); } catch { continue; }
-
-        if (eventType === 'node_start') {
-          /* Light up the trace bar for this node */
-          const elemId = NODE_MAP[payload.node];
-          if (elemId) setTrace(elemId);
-        }
-
-        else if (eventType === 'answer') {
-          /* Real answer arrived — update session, render message */
-          if (payload.session_id) {
-            SESSION_ID = payload.session_id;
-            sessionStorage.setItem('portfolio_session', SESSION_ID);
-          }
-          removeTyping();
-          allTraceDone();
-          if (payload.elapsed_s) updateElapsed(payload.elapsed_s);
-          addMsg('ai', payload.answer);
-        }
-
-        else if (eventType === 'done') {
-          /* Graph complete */
-        }
+(function(){
+  const revealObs = new IntersectionObserver((entries)=>{
+    entries.forEach((entry,i)=>{
+      if(entry.isIntersecting){
+        setTimeout(()=>entry.target.classList.add('vis'), i*40);
+        revealObs.unobserve(entry.target);
       }
-    }
-
-  } catch (err) {
-    removeTyping();
-    resetTrace();
-    console.error('Agent error:', err);
-    addMsg('ai',
-      `⚠️ Could not reach the backend agent.\n\n` +
-      `Make sure it's running: cd portfolio-agent && docker-compose up\n` +
-      `Then set AGENT_URL in the HTML to your server URL.`
-    );
-  }
-
-  sendBtn.disabled = false;
-  inp.focus();
-}
-
-function askQ(q) {
-  inp.value = q;
-  sendChat();
-  document.getElementById('chat-sec').scrollIntoView({ behavior: 'smooth' });
-}
-
-inp.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) sendChat();
-});
+    });
+  }, { threshold:0.08, rootMargin:'0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+})();
 </script>
 </body>
 </html>
